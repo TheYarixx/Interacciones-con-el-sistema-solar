@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sistema Solar 3D</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { margin: 0; overflow: hidden; background: black; color: white; font-family: 'Inter', sans-serif; }
+    #info-panel { position: absolute; bottom: 20px; left: 20px; background: rgba(0,0,0,0.7); padding: 20px; border-radius: 10px; display: none; }
+    canvas { display: block; }
+    #planet-buttons { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 10; }
+    .planet-btn { background: #1f2937; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: background 0.3s; }
+    .planet-btn:hover { background: #374151; }
+    #loading { position: absolute; inset: 0; background: #000; display: flex; justify-content: center; align-items: center; flex-direction: column; z-index: 20; }
+  </style>
+</head>
+<body>
+  <div id="loading">
+    <div class="animate-spin h-16 w-16 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+    <p class="mt-4 text-blue-300">Cargando sistema solar...</p>
+  </div>
+  <canvas id="canvas"></canvas>
+  <div id="planet-buttons"></div>
+  <div id="info-panel">
+    <h2 id="planet-name" class="text-yellow-400 text-xl font-bold"></h2>
+    <p id="planet-desc" class="text-sm text-gray-300 mt-2"></p>
+  </div>
+  <audio id="bg-music" loop autoplay>
+    <source src="audio/space.mp3" type="audio/mpeg" />
+  </audio>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
