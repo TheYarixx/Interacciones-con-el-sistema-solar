@@ -13,6 +13,7 @@
     .planet-btn { background: #1f2937; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: background 0.3s; }
     .planet-btn:hover { background: #374151; }
     #loading { position: absolute; inset: 0; background: #000; display: flex; justify-content: center; align-items: center; flex-direction: column; z-index: 20; }
+    #music-toggle { position: absolute; top: 20px; right: 20px; z-index: 10; background: #1f2937; padding: 10px 16px; border-radius: 8px; }
   </style>
 </head>
 <body>
@@ -20,15 +21,20 @@
     <div class="animate-spin h-16 w-16 border-4 border-blue-500 border-t-transparent rounded-full"></div>
     <p class="mt-4 text-blue-300">Cargando sistema solar...</p>
   </div>
+
+  <button id="music-toggle">🎵 Música</button>
+
   <canvas id="canvas"></canvas>
   <div id="planet-buttons"></div>
   <div id="info-panel">
     <h2 id="planet-name" class="text-yellow-400 text-xl font-bold"></h2>
     <p id="planet-desc" class="text-sm text-gray-300 mt-2"></p>
   </div>
-  <audio id="bg-music" loop autoplay>
+
+  <audio id="bg-music" loop>
     <source src="audio/space.mp3" type="audio/mpeg" />
   </audio>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
   <script src="main.js"></script>
