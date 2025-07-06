@@ -1,14 +1,20 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html><html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sistema Solar 3D</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { margin: 0; overflow: hidden; background: black; color: white; font-family: 'Inter', sans-serif; }
-    canvas { display: block; }
-    #loading { position: absolute; inset: 0; background: #000; display: flex; justify-content: center; align-items: center; flex-direction: column; z-index: 20; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+      color: white;
+      font-family: 'Inter', sans-serif;
+    }
+    canvas {
+      display: block;
+    }
     #planet-buttons {
       position: absolute;
       bottom: 20px;
@@ -16,49 +22,51 @@
       transform: translateX(-50%);
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
       gap: 10px;
-      max-width: 95%;
       z-index: 10;
+      justify-content: center;
     }
     .planet-btn {
       background: #1f2937;
-      padding: 8px 16px;
+      padding: 10px 20px;
       border-radius: 8px;
       cursor: pointer;
-      font-size: 0.9rem;
       transition: background 0.3s;
-      white-space: nowrap;
     }
-    .planet-btn:hover { background: #374151; }
-
+    .planet-btn:hover {
+      background: #374151;
+    }
+    #loading {
+      position: absolute;
+      inset: 0;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 20;
+    }
     #info-panel {
       position: absolute;
-      bottom: 100px;
-      left: 50%;
-      transform: translateX(-50%);
+      top: 20px;
+      right: 20px;
+      width: 300px;
+      max-width: 80vw;
       background: rgba(0, 0, 0, 0.7);
-      padding: 16px;
+      padding: 20px;
       border-radius: 10px;
-      max-width: 90%;
       display: none;
       z-index: 10;
     }
-
-    #music-toggle {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      z-index: 20;
-      background: #1f2937;
-      color: white;
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
     @media (max-width: 640px) {
-      #info-panel { font-size: 0.85rem; padding: 12px; }
+      #info-panel {
+        width: 90vw;
+        left: 50%;
+        transform: translateX(-50%);
+        top: auto;
+        bottom: 80px;
+        right: auto;
+      }
     }
   </style>
 </head>
@@ -68,7 +76,6 @@
     <p class="mt-4 text-blue-300">Cargando sistema solar...</p>
   </div>
   <canvas id="canvas"></canvas>
-  <button id="music-toggle">🔊 Música</button>
   <div id="planet-buttons"></div>
   <div id="info-panel">
     <h2 id="planet-name" class="text-yellow-400 text-xl font-bold"></h2>
