@@ -1,4 +1,4 @@
-const canvas = document.getElementById('canvas'); const infoPanel = document.getElementById('info-panel'); const nameEl = document.getElementById('planet-name'); const descEl = document.getElementById('planet-desc'); const buttons = document.getElementById('planet-buttons'); const music = document.getElementById('bg-music'); const toggleBtn = document.getElementById('music-toggle');
+// main.js const canvas = document.getElementById('canvas'); const infoPanel = document.getElementById('info-panel'); const nameEl = document.getElementById('planet-name'); const descEl = document.getElementById('planet-desc'); const buttons = document.getElementById('planet-buttons'); const music = document.getElementById('bg-music'); const toggleBtn = document.getElementById('music-toggle');
 
 let isMusicPlaying = true; toggleBtn.onclick = () => { isMusicPlaying ? music.pause() : music.play(); toggleBtn.textContent = isMusicPlaying ? '🔇 Música' : '🔊 Música'; isMusicPlaying = !isMusicPlaying; };
 
@@ -10,13 +10,15 @@ scene.add(new THREE.AmbientLight(0x404040)); scene.add(new THREE.PointLight(0xff
 
 const loader = new THREE.TextureLoader(); const planets = []; let selectedPlanet = null;
 
-const planetsData = [ { name: 'Mercurio', texture: 'textures/mercury.jpg', size: 0.3, distance: 3.5, orbitSpeed: 0.03, desc: 'Mercurio es el planeta más cercano al Sol y el más pequeño.', moons: [] }, { name: 'Venus', texture: 'textures/venus.jpg', size: 0.35, distance: 5, orbitSpeed: 0.015, desc: 'Venus tiene una atmósfera muy densa y caliente.', moons: [] }, { name: 'Tierra', texture: 'textures/earth.jpg', size: 0.38, distance: 6.5, orbitSpeed: 0.01, desc: 'La Tierra es el único planeta conocido con vida.', moons: [{ name: 'Luna', texture: 'textures/moons/moon.jpg', size: 0.1, distance: 0.6 }] }, { name: 'Marte', texture: 'textures/mars.jpg', size: 0.3, distance: 8, orbitSpeed: 0.008, desc: 'El planeta rojo.', moons: [{ name: 'Fobos', texture: 'textures/moons/phobos.jpg', size: 0.05, distance: 0.4 }] }, { name: 'Júpiter', texture: 'textures/jupiter.jpg', size: 0.8, distance: 10, orbitSpeed: 0.004, desc: 'El planeta más grande.', moons: [{ name: 'Europa', texture: 'textures/moons/europa.jpg', size: 0.1, distance: 1.5 }] }, { name: 'Saturno', texture: 'textures/saturn.jpg', size: 0.7, distance: 12.5, orbitSpeed: 0.003, desc: 'Famoso por sus anillos.', moons: [{ name: 'Titán', texture: 'textures/moons/titan.jpg', size: 0.1, distance: 1.2 }], ring: 'textures/rings/saturn_ring.png' }, { name: 'Urano', texture: 'textures/uranus.jpg', size: 0.5, distance: 14.5, orbitSpeed: 0.002, desc: 'Gigante helado.', moons: [{ name: 'Titania', texture: 'textures/moons/titania.jpg', size: 0.07, distance: 0.8 }] }, { name: 'Neptuno', texture: 'textures/neptune.jpg', size: 0.5, distance: 16.5, orbitSpeed: 0.0015, desc: 'Azul y ventoso.', moons: [{ name: 'Tritón', texture: 'textures/moons/triton.jpg', size: 0.08, distance: 0.9 }] }, { name: 'Plutón', texture: 'textures/pluto.jpg', size: 0.2, distance: 18.5, orbitSpeed: 0.001, desc: 'Planeta enano.', moons: [] } ];
+const planetMoons = { Tierra: [{ name: 'Luna', texture: 'textures/moons/luna.jpg', size: 0.08, distance: 0.6 }], Marte: [ { name: 'Fobos', texture: 'textures/moons/fobos.jpg', size: 0.05, distance: 0.5 }, { name: 'Deimos', texture: 'textures/moons/deimos.jpg', size: 0.04, distance: 0.7 } ], Júpiter: [{ name: 'Europa', texture: 'textures/moons/europa.jpg', size: 0.1, distance: 1.2 }], Saturno: [{ name: 'Titán', texture: 'textures/moons/titan.jpg', size: 0.1, distance: 1.2 }], Urano: [{ name: 'Titania', texture: 'textures/moons/titania.jpg', size: 0.08, distance: 1.2 }], Neptuno: [{ name: 'Tritón', texture: 'textures/moons/triton.jpg', size: 0.08, distance: 1.2 }] };
 
-let loaded = 0; const totalToLoad = planetsData.length + 1;
+const planetsData = [ { name: 'Mercurio', texture: 'textures/mercury.jpg', size: 0.3, distance: 3.5, orbitSpeed: 0.03, desc: 'Mercurio es el planeta más cercano al Sol.' }, { name: 'Venus', texture: 'textures/venus.jpg', size: 0.35, distance: 5, orbitSpeed: 0.015, desc: 'Venus tiene una atmósfera muy densa y caliente.' }, { name: 'Tierra', texture: 'textures/earth.jpg', size: 0.38, distance: 6.5, orbitSpeed: 0.01, desc: 'La Tierra es el único planeta conocido con vida.' }, { name: 'Marte', texture: 'textures/mars.jpg', size: 0.3, distance: 8, orbitSpeed: 0.008, desc: 'Marte es el planeta rojo con dos pequeñas lunas.' }, { name: 'Júpiter', texture: 'textures/jupiter.jpg', size: 0.8, distance: 10, orbitSpeed: 0.004, desc: 'Júpiter es el planeta más grande del sistema solar.' }, { name: 'Saturno', texture: 'textures/saturn.jpg', size: 0.7, distance: 12.5, orbitSpeed: 0.003, desc: 'Saturno es famoso por sus impresionantes anillos.' }, { name: 'Urano', texture: 'textures/uranus.jpg', size: 0.5, distance: 14.5, orbitSpeed: 0.002, desc: 'Urano es un gigante helado que rota de lado.' }, { name: 'Neptuno', texture: 'textures/neptune.jpg', size: 0.5, distance: 16.5, orbitSpeed: 0.0015, desc: 'Neptuno tiene vientos extremos.' }, { name: 'Plutón', texture: 'textures/pluto.jpg', size: 0.2, distance: 18.5, orbitSpeed: 0.001, desc: 'Plutón es un planeta enano con superficie helada.' } ];
 
-function checkLoaded() { loaded++; if (loaded === totalToLoad) { document.getElementById('loading').style.display = 'none'; } }
+let loaded = 0; const totalToLoad = planetsData.length + 1; function checkLoaded() { loaded++; if (loaded === totalToLoad) { document.getElementById('loading').style.display = 'none'; } }
 
-loader.load('textures/sun.jpg', texture => { const sunGeo = new THREE.SphereGeometry(1.2, 32, 32); const sunMat = new THREE.MeshBasicMaterial({ map: texture }); const sun = new THREE.Mesh(sunGeo, sunMat); scene.add(sun); checkLoaded(); }, undefined, checkLoaded);
+// Fondo estrellado const starsGeometry = new THREE.BufferGeometry(); const starCount = 1000; const starPositions = new Float32Array(starCount * 3); for (let i = 0; i < starCount * 3; i++) { starPositions[i] = (Math.random() - 0.5) * 200; } starsGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3)); const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.5 }); const stars = new THREE.Points(starsGeometry, starsMaterial); scene.add(stars);
+
+// Sol loader.load('textures/sun.jpg', texture => { const sunGeo = new THREE.SphereGeometry(1.2, 32, 32); const sunMat = new THREE.MeshBasicMaterial({ map: texture }); const sun = new THREE.Mesh(sunGeo, sunMat); scene.add(sun); checkLoaded(); }, undefined, checkLoaded);
 
 planetsData.forEach(data => { loader.load(data.texture, texture => { const orbitGroup = new THREE.Group(); scene.add(orbitGroup);
 
@@ -27,26 +29,29 @@ mesh.userData = { ...data, angle: Math.random() * Math.PI * 2 };
 orbitGroup.add(mesh);
 planets.push({ mesh, data });
 
-// Anillos de Saturno
-if (data.ring) {
-  const ringTex = loader.load(data.ring);
-  const ringGeo = new THREE.RingGeometry(data.size * 1.2, data.size * 2, 64);
-  const ringMat = new THREE.MeshBasicMaterial({ map: ringTex, side: THREE.DoubleSide, transparent: true });
-  const ring = new THREE.Mesh(ringGeo, ringMat);
-  ring.rotation.x = Math.PI / 2;
-  mesh.add(ring);
+// Lunas
+if (planetMoons[data.name]) {
+  planetMoons[data.name].forEach((moon, index) => {
+    loader.load(moon.texture, moonTexture => {
+      const moonGeo = new THREE.SphereGeometry(moon.size, 16, 16);
+      const moonMat = new THREE.MeshStandardMaterial({ map: moonTexture });
+      const moonMesh = new THREE.Mesh(moonGeo, moonMat);
+      moonMesh.userData = { angle: Math.random() * Math.PI * 2, distance: moon.distance, speed: 0.03 + index * 0.01 };
+      mesh.add(moonMesh);
+      mesh.userData.moons = mesh.userData.moons || [];
+      mesh.userData.moons.push(moonMesh);
+    });
+  });
 }
 
-// Lunas
-if (data.moons) {
-  data.moons.forEach(moon => {
-    loader.load(moon.texture, moonTex => {
-      const moonGeo = new THREE.SphereGeometry(moon.size, 32, 32);
-      const moonMat = new THREE.MeshStandardMaterial({ map: moonTex });
-      const moonMesh = new THREE.Mesh(moonGeo, moonMat);
-      moonMesh.position.x = moon.distance;
-      mesh.add(moonMesh);
-    });
+// Anillos de Saturno
+if (data.name === 'Saturno') {
+  loader.load('textures/rings/saturn_ring.png', ringTexture => {
+    const ringGeo = new THREE.RingGeometry(data.size + 0.1, data.size + 0.4, 64);
+    const ringMat = new THREE.MeshBasicMaterial({ map: ringTexture, side: THREE.DoubleSide, transparent: true });
+    const ring = new THREE.Mesh(ringGeo, ringMat);
+    ring.rotation.x = Math.PI / 2;
+    mesh.add(ring);
   });
 }
 
@@ -57,7 +62,7 @@ const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
 orbit.rotation.x = Math.PI / 2;
 scene.add(orbit);
 
-// Botón
+// Botón de selección
 const btn = document.createElement('button');
 btn.className = 'planet-btn';
 btn.textContent = data.name;
@@ -73,15 +78,25 @@ checkLoaded();
 
 }, undefined, checkLoaded); });
 
-// Cinturón de asteroides (entre Marte y Júpiter) for (let i = 0; i < 300; i++) { const angle = Math.random() * Math.PI * 2; const radius = 9 + Math.random(); const asteroid = new THREE.Mesh( new THREE.SphereGeometry(0.02, 6, 6), new THREE.MeshStandardMaterial({ color: 0x888888 }) ); asteroid.position.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius); scene.add(asteroid); }
+// Cinturones de asteroides function createAsteroidBelt(radius, count) { const belt = new THREE.Group(); for (let i = 0; i < count; i++) { const geo = new THREE.SphereGeometry(0.03, 6, 6); const mat = new THREE.MeshStandardMaterial({ color: 0x888888 }); const asteroid = new THREE.Mesh(geo, mat); const angle = Math.random() * Math.PI * 2; const dist = radius + (Math.random() - 0.5); asteroid.position.set(Math.cos(angle) * dist, (Math.random() - 0.5) * 0.3, Math.sin(angle) * dist); belt.add(asteroid); } scene.add(belt); }
 
-// Cinturón de Kuiper (después de Neptuno) for (let i = 0; i < 200; i++) { const angle = Math.random() * Math.PI * 2; const radius = 20 + Math.random() * 3; const asteroid = new THREE.Mesh( new THREE.SphereGeometry(0.015, 6, 6), new THREE.MeshStandardMaterial({ color: 0x666666 }) ); asteroid.position.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius); scene.add(asteroid); }
+createAsteroidBelt(9, 300); // Entre Marte y Júpiter createAsteroidBelt(21, 400); // Cinturón de Kuiper
 
 camera.position.set(0, 5, 20); controls.update();
 
 function animate() { requestAnimationFrame(animate);
 
-planets.forEach(obj => { const { mesh, data } = obj; mesh.userData.angle += data.orbitSpeed; mesh.position.x = Math.cos(mesh.userData.angle) * data.distance; mesh.position.z = Math.sin(mesh.userData.angle) * data.distance; mesh.rotation.y += 0.01; });
+planets.forEach(obj => { const { mesh, data } = obj; mesh.userData.angle += data.orbitSpeed; mesh.position.x = Math.cos(mesh.userData.angle) * data.distance; mesh.position.z = Math.sin(mesh.userData.angle) * data.distance; mesh.rotation.y += 0.01;
+
+if (mesh.userData.moons) {
+  mesh.userData.moons.forEach(moon => {
+    moon.userData.angle += moon.userData.speed;
+    moon.position.x = Math.cos(moon.userData.angle) * moon.userData.distance;
+    moon.position.z = Math.sin(moon.userData.angle) * moon.userData.distance;
+  });
+}
+
+});
 
 if (selectedPlanet) { const pos = selectedPlanet.position; controls.target.copy(pos); camera.position.lerp(new THREE.Vector3(pos.x + 2, pos.y + 1, pos.z + 2), 0.05); }
 
