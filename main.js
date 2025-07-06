@@ -31,9 +31,10 @@ const loader = new THREE.TextureLoader();
 const planets = [];
 const orbitMeshes = [];
 const moonGroups = [];
-let showLunas = true;//Declarado antes de usarse
 
 let selectedPlanet = null;
+let showOrbits = true;
+let showLunas = true;
 
 const planetsData = [
   { name: 'Mercurio', texture: 'textures/mercury.jpg', size: 0.3, distance: 3.5, orbitSpeed: 0.03, desc: 'Mercurio es el planeta más cercano al Sol y el más pequeño.' },
@@ -47,7 +48,6 @@ const planetsData = [
   { name: 'Plutón', texture: 'textures/pluto.jpg', size: 0.2, distance: 18.5, orbitSpeed: 0.001, desc: 'Plutón es un planeta enano con una órbita excéntrica.' }
 ];
 
-// 🌙 Lunas importantes por planeta
 const moonsData = {
   'Tierra': [{ name: 'Luna', texture: 'textures/moons/luna.jpg', size: 0.1, distance: 0.6 }],
   'Marte': [
@@ -60,8 +60,9 @@ const moonsData = {
   'Neptuno': [{ name: 'Tritón', texture: 'textures/moons/triton.jpg', size: 0.08, distance: 0.9 }]
 };
 
+// Contador de carga ajustado
+const totalToLoad = planetsData.length + 1 + Object.values(moonsData).flat().length;
 let loaded = 0;
-const totalToLoad = planetsData.length + 1;
 
 function checkLoaded() {
   loaded++;
@@ -70,7 +71,7 @@ function checkLoaded() {
   }
 }
 
-// Sol
+// 🌞 Sol
 loader.load('textures/sun.jpg', texture => {
   const sun = new THREE.Mesh(
     new THREE.SphereGeometry(1.2, 32, 32),
@@ -78,23 +79,24 @@ loader.load('textures/sun.jpg', texture => {
   );
   scene.add(sun);
   checkLoaded();
-}, undefined, checkLoaded);
+});
 
-// Planetas y sus lunas
+// Planetas y lunas
 planetsData.forEach(data => {
   loader.load(data.texture, texture => {
     const orbitGroup = new THREE.Group();
     scene.add(orbitGroup);
 
-    const geometry = new THREE.SphereGeometry(data.size, 32, 32);
-    const material = new THREE.MeshStandardMaterial({ map: texture });
-    const mesh = new THREE.Mesh(geometry, material);
+    const mesh = new THREE.Mesh(
+      new THREE.SphereGeometry(data.size, 32, 32),
+      new THREE.MeshStandardMaterial({ map: texture })
+    );
     mesh.userData = { ...data, angle: Math.random() * Math.PI * 2 };
 
     orbitGroup.add(mesh);
     planets.push({ mesh, data });
 
-    // Órbitas
+    // Órbita del planeta
     const orbit = new THREE.Mesh(
       new THREE.RingGeometry(data.distance - 0.01, data.distance + 0.01, 64),
       new THREE.MeshBasicMaterial({ color: 0x555555, side: THREE.DoubleSide })
@@ -123,24 +125,23 @@ planetsData.forEach(data => {
           speed: 0.05 + index * 0.01
         };
         moonGroup.add(moonMesh);
+        checkLoaded();
       });
     });
 
+    // Selector
     const option = document.createElement('option');
     option.value = data.name;
     option.textContent = data.name;
     goToSelect.appendChild(option);
 
     checkLoaded();
-  }, undefined, checkLoaded);
+  });
 });
 
+// Cámara y eventos
 camera.position.set(0, 5, 20);
 controls.update();
-
-// Eventos UI
-let showOrbits = true;
-let showLunas = true;
 
 toggleOrbits.onchange = () => {
   showOrbits = toggleOrbits.checked;
@@ -193,3 +194,5 @@ function animate() {
   controls.update();
   renderer.render(scene, camera);
 }
+
+animate();
