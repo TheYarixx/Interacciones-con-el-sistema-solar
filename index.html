@@ -8,88 +8,17 @@
   <style>
     body { margin: 0; overflow: hidden; background: black; font-family: 'Inter', sans-serif; }
     canvas { display: block; }
-
-    #loading {
-      position: absolute; inset: 0;
-      background: #000;
-      display: flex; justify-content: center; align-items: center;
-      flex-direction: column;
-      z-index: 20;
-    }
-
-    #planet-buttons {
-      position: absolute; bottom: 10px;
-      left: 50%; transform: translateX(-50%);
-      display: flex; flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px; z-index: 10;
-      padding: 10px;
-    }
-
-    .planet-btn {
-      background: #1f2937;
-      padding: 6px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.875rem;
-      transition: background 0.3s;
-    }
-
+    #loading { position: absolute; inset: 0; background: #000; display: flex; justify-content: center; align-items: center; flex-direction: column; z-index: 20; }
+    #planet-buttons { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; z-index: 10; padding: 10px; }
+    .planet-btn { background: #1f2937; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 0.875rem; transition: background 0.3s; }
     .planet-btn:hover { background: #374151; }
-
-    #info-panel {
-      position: absolute;
-      top: 20px; right: 20px;
-      width: 280px;
-      background: rgba(0,0,0,0.7);
-      padding: 16px;
-      border-radius: 10px;
-      display: none;
-      z-index: 15;
-    }
-
-    #music-toggle {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 6px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    #control-panel {
-      position: absolute;
-      top: 10px; left: 10px;
-      background: rgba(0, 0, 0, 0.6);
-      padding: 10px;
-      border-radius: 10px;
-      z-index: 15;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    #control-panel select,
-    #control-panel label {
-      font-size: 0.875rem;
-      color: white;
-    }
-
+    #info-panel { position: absolute; top: 20px; right: 20px; width: 280px; background: rgba(0,0,0,0.7); padding: 16px; border-radius: 10px; display: none; z-index: 15; }
+    #music-toggle { background: rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 8px; cursor: pointer; }
+    #control-panel { position: absolute; top: 10px; left: 10px; background: rgba(0, 0, 0, 0.6); padding: 10px; border-radius: 10px; z-index: 15; display: flex; flex-direction: column; gap: 8px; }
+    #control-panel select, #control-panel label { font-size: 0.875rem; color: white; }
     @media (max-width: 768px) {
-      #info-panel {
-        width: 90%;
-        top: auto;
-        bottom: 80px;
-        left: 50%;
-        transform: translateX(-50%);
-      }
-      #control-panel {
-        left: 50%;
-        top: auto;
-        bottom: 10px;
-        transform: translateX(-50%);
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
+      #info-panel { width: 90%; top: auto; bottom: 80px; left: 50%; transform: translateX(-50%); }
+      #control-panel { left: 50%; top: auto; bottom: 10px; transform: translateX(-50%); flex-direction: row; flex-wrap: wrap; justify-content: center; }
     }
   </style>
 </head>
@@ -108,18 +37,10 @@
     <p id="planet-desc" class="text-sm text-gray-300 mt-2"></p>
   </div>
 
-  <!-- 📌 Panel de navegación -->
   <div id="control-panel">
-    <label>
-      Planeta:
-      <select id="planet-selector"></select>
-    </label>
-    <label>
-      <input type="checkbox" id="toggle-orbits" checked /> Órbitas
-    </label>
-    <label>
-      <input type="checkbox" id="toggle-moons" checked /> Lunas
-    </label>
+    <label>Planeta: <select id="planet-selector"></select></label>
+    <label><input type="checkbox" id="toggle-orbits" checked /> Órbitas</label>
+    <label><input type="checkbox" id="toggle-moons" checked /> Lunas</label>
     <button id="music-toggle">🔊 Música</button>
   </div>
 
