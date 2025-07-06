@@ -1,5 +1,3 @@
-// main.js completo con lunas principales y seguimiento orbital
-
 const canvas = document.getElementById('canvas'); const infoPanel = document.getElementById('info-panel'); const nameEl = document.getElementById('planet-name'); const descEl = document.getElementById('planet-desc'); const buttons = document.getElementById('planet-buttons'); const music = document.getElementById('bg-music'); const toggleBtn = document.getElementById('music-toggle');
 
 let isMusicPlaying = true; toggleBtn.onclick = () => { isMusicPlaying ? music.pause() : music.play(); toggleBtn.textContent = isMusicPlaying ? '🔇 Música' : '🔊 Música'; isMusicPlaying = !isMusicPlaying; };
@@ -12,9 +10,7 @@ scene.add(new THREE.AmbientLight(0x404040)); scene.add(new THREE.PointLight(0xff
 
 const loader = new THREE.TextureLoader(); const planets = []; let selectedPlanet = null;
 
-const moonData = { Tierra: [{ name: "Luna", texture: "textures/lunas/moon.jpg", size: 0.08, distance: 0.6, speed: 0.05 }], Marte: [ { name: "Fobos", texture: "textures/lunas/phobos.jpg", size: 0.05, distance: 0.4, speed: 0.07 }, { name: "Deimos", texture: "textures/lunas/deimos.jpg", size: 0.04, distance: 0.6, speed: 0.04 }, ], Júpiter: [{ name: "Europa", texture: "textures/lunas/europa.jpg", size: 0.1, distance: 1, speed: 0.03 }], Saturno: [{ name: "Titán", texture: "textures/lunas/titan.jpg", size: 0.1, distance: 1.1, speed: 0.02 }], Urano: [{ name: "Titania", texture: "textures/lunas/titania.jpg", size: 0.08, distance: 0.8, speed: 0.025 }], Neptuno: [{ name: "Tritón", texture: "textures/lunas/triton.jpg", size: 0.09, distance: 0.9, speed: 0.015 }], Plutón: [{ name: "Caronte", texture: "textures/lunas/charon.jpg", size: 0.07, distance: 0.5, speed: 0.02 }], };
-
-const planetsData = [ { name: 'Mercurio', texture: 'textures/mercury.jpg', size: 0.3, distance: 3.5, orbitSpeed: 0.03, desc: 'Mercurio es el planeta más cercano al Sol y el más pequeño. No tiene lunas y su superficie está cubierta de cráteres.' }, { name: 'Venus', texture: 'textures/venus.jpg', size: 0.35, distance: 5, orbitSpeed: 0.015, desc: 'Venus tiene una atmósfera muy densa y caliente. Gira en dirección opuesta a la mayoría de los planetas.' }, { name: 'Tierra', texture: 'textures/earth.jpg', size: 0.38, distance: 6.5, orbitSpeed: 0.01, desc: 'La Tierra es el tercer planeta desde el Sol y el único conocido con vida. El 71% está cubierto por agua.' }, { name: 'Marte', texture: 'textures/mars.jpg', size: 0.3, distance: 8, orbitSpeed: 0.008, desc: 'Marte es conocido como el Planeta Rojo. Tiene volcanes, cañones gigantes y dos pequeñas lunas.' }, { name: 'Júpiter', texture: 'textures/jupiter.jpg', size: 0.8, distance: 10, orbitSpeed: 0.004, desc: 'Júpiter es el planeta más grande del sistema solar, con más de 75 lunas y una gran mancha roja.' }, { name: 'Saturno', texture: 'textures/saturn.jpg', size: 0.7, distance: 12.5, orbitSpeed: 0.003, desc: 'Saturno es famoso por sus impresionantes anillos hechos de hielo y roca. Tiene más de 80 lunas.' }, { name: 'Urano', texture: 'textures/uranus.jpg', size: 0.5, distance: 14.5, orbitSpeed: 0.002, desc: 'Urano es un gigante helado que rota de lado. Su color azul verdoso se debe al metano en su atmósfera.' }, { name: 'Neptuno', texture: 'textures/neptune.jpg', size: 0.5, distance: 16.5, orbitSpeed: 0.0015, desc: 'Neptuno tiene vientos más rápidos que cualquier otro planeta y un color azul intenso por el metano.' }, { name: 'Plutón', texture: 'textures/pluto.jpg', size: 0.2, distance: 18.5, orbitSpeed: 0.001, desc: 'Plutón es un planeta enano con una superficie helada y una órbita muy excéntrica.' } ];
+const planetsData = [ { name: 'Mercurio', texture: 'textures/mercury.jpg', size: 0.3, distance: 3.5, orbitSpeed: 0.03, desc: 'Mercurio es el planeta más cercano al Sol y el más pequeño.', moons: [] }, { name: 'Venus', texture: 'textures/venus.jpg', size: 0.35, distance: 5, orbitSpeed: 0.015, desc: 'Venus tiene una atmósfera muy densa y caliente.', moons: [] }, { name: 'Tierra', texture: 'textures/earth.jpg', size: 0.38, distance: 6.5, orbitSpeed: 0.01, desc: 'La Tierra es el único planeta conocido con vida.', moons: [{ name: 'Luna', texture: 'textures/moons/moon.jpg', size: 0.1, distance: 0.6 }] }, { name: 'Marte', texture: 'textures/mars.jpg', size: 0.3, distance: 8, orbitSpeed: 0.008, desc: 'El planeta rojo.', moons: [{ name: 'Fobos', texture: 'textures/moons/phobos.jpg', size: 0.05, distance: 0.4 }] }, { name: 'Júpiter', texture: 'textures/jupiter.jpg', size: 0.8, distance: 10, orbitSpeed: 0.004, desc: 'El planeta más grande.', moons: [{ name: 'Europa', texture: 'textures/moons/europa.jpg', size: 0.1, distance: 1.5 }] }, { name: 'Saturno', texture: 'textures/saturn.jpg', size: 0.7, distance: 12.5, orbitSpeed: 0.003, desc: 'Famoso por sus anillos.', moons: [{ name: 'Titán', texture: 'textures/moons/titan.jpg', size: 0.1, distance: 1.2 }], ring: 'textures/rings/saturn_ring.png' }, { name: 'Urano', texture: 'textures/uranus.jpg', size: 0.5, distance: 14.5, orbitSpeed: 0.002, desc: 'Gigante helado.', moons: [{ name: 'Titania', texture: 'textures/moons/titania.jpg', size: 0.07, distance: 0.8 }] }, { name: 'Neptuno', texture: 'textures/neptune.jpg', size: 0.5, distance: 16.5, orbitSpeed: 0.0015, desc: 'Azul y ventoso.', moons: [{ name: 'Tritón', texture: 'textures/moons/triton.jpg', size: 0.08, distance: 0.9 }] }, { name: 'Plutón', texture: 'textures/pluto.jpg', size: 0.2, distance: 18.5, orbitSpeed: 0.001, desc: 'Planeta enano.', moons: [] } ];
 
 let loaded = 0; const totalToLoad = planetsData.length + 1;
 
@@ -28,31 +24,40 @@ const geometry = new THREE.SphereGeometry(data.size, 32, 32);
 const material = new THREE.MeshStandardMaterial({ map: texture });
 const mesh = new THREE.Mesh(geometry, material);
 mesh.userData = { ...data, angle: Math.random() * Math.PI * 2 };
-
 orbitGroup.add(mesh);
-const moons = [];
+planets.push({ mesh, data });
 
-if (moonData[data.name]) {
-  moonData[data.name].forEach(moon => {
+// Anillos de Saturno
+if (data.ring) {
+  const ringTex = loader.load(data.ring);
+  const ringGeo = new THREE.RingGeometry(data.size * 1.2, data.size * 2, 64);
+  const ringMat = new THREE.MeshBasicMaterial({ map: ringTex, side: THREE.DoubleSide, transparent: true });
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.rotation.x = Math.PI / 2;
+  mesh.add(ring);
+}
+
+// Lunas
+if (data.moons) {
+  data.moons.forEach(moon => {
     loader.load(moon.texture, moonTex => {
-      const moonGeo = new THREE.SphereGeometry(moon.size, 16, 16);
+      const moonGeo = new THREE.SphereGeometry(moon.size, 32, 32);
       const moonMat = new THREE.MeshStandardMaterial({ map: moonTex });
       const moonMesh = new THREE.Mesh(moonGeo, moonMat);
-      moonMesh.userData = { ...moon, angle: Math.random() * Math.PI * 2 };
+      moonMesh.position.x = moon.distance;
       mesh.add(moonMesh);
-      moons.push(moonMesh);
     });
   });
 }
 
-planets.push({ mesh, data, moons });
-
+// Órbita visual
 const orbitGeometry = new THREE.RingGeometry(data.distance - 0.01, data.distance + 0.01, 64);
 const orbitMaterial = new THREE.MeshBasicMaterial({ color: 0x555555, side: THREE.DoubleSide });
 const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
 orbit.rotation.x = Math.PI / 2;
 scene.add(orbit);
 
+// Botón
 const btn = document.createElement('button');
 btn.className = 'planet-btn';
 btn.textContent = data.name;
@@ -68,22 +73,17 @@ checkLoaded();
 
 }, undefined, checkLoaded); });
 
+// Cinturón de asteroides (entre Marte y Júpiter) for (let i = 0; i < 300; i++) { const angle = Math.random() * Math.PI * 2; const radius = 9 + Math.random(); const asteroid = new THREE.Mesh( new THREE.SphereGeometry(0.02, 6, 6), new THREE.MeshStandardMaterial({ color: 0x888888 }) ); asteroid.position.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius); scene.add(asteroid); }
+
+// Cinturón de Kuiper (después de Neptuno) for (let i = 0; i < 200; i++) { const angle = Math.random() * Math.PI * 2; const radius = 20 + Math.random() * 3; const asteroid = new THREE.Mesh( new THREE.SphereGeometry(0.015, 6, 6), new THREE.MeshStandardMaterial({ color: 0x666666 }) ); asteroid.position.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius); scene.add(asteroid); }
+
 camera.position.set(0, 5, 20); controls.update();
 
 function animate() { requestAnimationFrame(animate);
 
-planets.forEach(obj => { const { mesh, data, moons } = obj; mesh.userData.angle += data.orbitSpeed; mesh.position.x = Math.cos(mesh.userData.angle) * data.distance; mesh.position.z = Math.sin(mesh.userData.angle) * data.distance; mesh.rotation.y += 0.01;
-
-moons.forEach(moon => {
-  moon.userData.angle += moon.userData.speed;
-  moon.position.x = Math.cos(moon.userData.angle) * moon.userData.distance;
-  moon.position.z = Math.sin(moon.userData.angle) * moon.userData.distance;
-});
-
-});
+planets.forEach(obj => { const { mesh, data } = obj; mesh.userData.angle += data.orbitSpeed; mesh.position.x = Math.cos(mesh.userData.angle) * data.distance; mesh.position.z = Math.sin(mesh.userData.angle) * data.distance; mesh.rotation.y += 0.01; });
 
 if (selectedPlanet) { const pos = selectedPlanet.position; controls.target.copy(pos); camera.position.lerp(new THREE.Vector3(pos.x + 2, pos.y + 1, pos.z + 2), 0.05); }
 
 controls.update(); renderer.render(scene, camera); } animate();
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
