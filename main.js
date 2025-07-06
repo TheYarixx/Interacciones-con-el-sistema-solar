@@ -33,10 +33,9 @@ const orbitMeshes = [];
 const moonGroups = [];
 
 let selectedPlanet = null;
-let showLunas = true;
 let showOrbits = true;
+let showLunas = true;
 
-// 🌍 Datos de planetas
 const planetsData = [
   { name: 'Mercurio', texture: 'textures/mercury.jpg', size: 0.3, distance: 3.5, orbitSpeed: 0.03, desc: 'Mercurio es el planeta más cercano al Sol y el más pequeño.' },
   { name: 'Venus', texture: 'textures/venus.jpg', size: 0.35, distance: 5, orbitSpeed: 0.015, desc: 'Venus tiene una atmósfera muy densa y caliente.' },
@@ -49,7 +48,6 @@ const planetsData = [
   { name: 'Plutón', texture: 'textures/pluto.jpg', size: 0.2, distance: 18.5, orbitSpeed: 0.001, desc: 'Plutón es un planeta enano con una órbita excéntrica.' }
 ];
 
-// 🌙 Lunas
 const moonsData = {
   'Tierra': [{ name: 'Luna', texture: 'textures/moons/luna.jpg', size: 0.1, distance: 0.6 }],
   'Marte': [
@@ -63,16 +61,16 @@ const moonsData = {
 };
 
 let loaded = 0;
-const totalToLoad = planetsData.length + 1 + Object.values(moonsData).flat().length + 1; // +1 fondo
+const totalToLoad = planetsData.length + 1 + Object.values(moonsData).flat().length + 1; // +1 for stars
 
 function checkLoaded() {
   loaded++;
-  if (loaded >= totalToLoad) {
+  if (loaded === totalToLoad) {
     document.getElementById('loading').style.display = 'none';
   }
 }
 
-// 🌌 Fondo estrellado
+// 🌌 Fondo de estrellas
 loader.load('textures/stars/space.jpg', texture => {
   const stars = new THREE.Mesh(
     new THREE.SphereGeometry(100, 64, 64),
@@ -80,9 +78,9 @@ loader.load('textures/stars/space.jpg', texture => {
   );
   scene.add(stars);
   checkLoaded();
-}, undefined, checkLoaded);
+});
 
-// ☀️ Sol
+// 🌞 Sol
 loader.load('textures/sun.jpg', texture => {
   const sun = new THREE.Mesh(
     new THREE.SphereGeometry(1.2, 32, 32),
@@ -102,8 +100,8 @@ planetsData.forEach(data => {
     const material = new THREE.MeshStandardMaterial({ map: texture });
     const mesh = new THREE.Mesh(geometry, material);
     mesh.userData = { ...data, angle: Math.random() * Math.PI * 2 };
-    orbitGroup.add(mesh);
 
+    orbitGroup.add(mesh);
     planets.push({ mesh, data });
 
     // Órbitas
@@ -112,9 +110,21 @@ planetsData.forEach(data => {
       new THREE.MeshBasicMaterial({ color: 0x555555, side: THREE.DoubleSide })
     );
     orbit.rotation.x = Math.PI / 2;
-    orbit.visible = showOrbits;
     orbitMeshes.push(orbit);
     scene.add(orbit);
+
+    // 🪐 Anillos de Saturno (estático)
+    if (data.name === 'Saturno') {
+      loader.load('textures/rings/saturn_ring.png', ringTex => {
+        const ring = new THREE.Mesh(
+          new THREE.RingGeometry(data.size + 0.1, data.size + 0.4, 64),
+          new THREE.MeshBasicMaterial({ map: ringTex, transparent: true, side: THREE.DoubleSide })
+        );
+        ring.rotation.x = Math.PI / 2;
+        mesh.add(ring);
+        checkLoaded();
+      }, undefined, checkLoaded);
+    }
 
     // 🌙 Lunas
     const moonGroup = new THREE.Group();
@@ -140,23 +150,6 @@ planetsData.forEach(data => {
       }, undefined, checkLoaded);
     });
 
-    // 🪐 Anillos de Saturno
-    if (data.name === 'Saturno') {
-      loader.load('textures/rings/saturn_ring.png', ringTex => {
-        const ring = new THREE.Mesh(
-          new THREE.RingGeometry(data.size + 0.1, data.size + 0.5, 64),
-          new THREE.MeshBasicMaterial({
-            map: ringTex,
-            side: THREE.DoubleSide,
-            transparent: true
-          })
-        );
-        ring.rotation.x = Math.PI / 2;
-        mesh.add(ring);
-        checkLoaded();
-      }, undefined, checkLoaded);
-    }
-
     // Selector
     const option = document.createElement('option');
     option.value = data.name;
@@ -167,11 +160,10 @@ planetsData.forEach(data => {
   }, undefined, checkLoaded);
 });
 
-// 📷 Cámara
 camera.position.set(0, 5, 20);
 controls.update();
 
-// 📦 UI
+// UI
 toggleOrbits.onchange = () => {
   showOrbits = toggleOrbits.checked;
   orbitMeshes.forEach(o => o.visible = showOrbits);
@@ -193,7 +185,7 @@ goToSelect.onchange = () => {
   }
 };
 
-// 🚀 Animación
+// 🎞️ Animación
 function animate() {
   requestAnimationFrame(animate);
 
