@@ -31,6 +31,7 @@ const loader = new THREE.TextureLoader();
 const planets = [];
 const orbitMeshes = [];
 const moonGroups = [];
+let showLunas = true;//Declarado antes de usarse
 
 let selectedPlanet = null;
 
