@@ -6,23 +6,38 @@
   <title>Sistema Solar 3D</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { margin: 0; overflow: hidden; background: black; font-family: 'Inter', sans-serif; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+      font-family: 'Inter', sans-serif;
+    }
     canvas { display: block; }
+
     #loading {
-      position: absolute; inset: 0;
+      position: absolute;
+      inset: 0;
       background: #000;
-      display: flex; justify-content: center; align-items: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       flex-direction: column;
       z-index: 20;
     }
+
     #planet-buttons {
-      position: absolute; bottom: 10px;
-      left: 50%; transform: translateX(-50%);
-      display: flex; flex-wrap: wrap;
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-wrap: wrap;
       justify-content: center;
-      gap: 8px; z-index: 10;
+      gap: 8px;
+      z-index: 10;
       padding: 10px;
     }
+
     .planet-btn {
       background: #1f2937;
       padding: 6px 12px;
@@ -31,26 +46,34 @@
       font-size: 0.875rem;
       transition: background 0.3s;
     }
+
     .planet-btn:hover { background: #374151; }
 
     #info-panel {
       position: absolute;
-      top: 20px; right: 20px;
-      width: 280px;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0, 0, 0, 0.75);
       padding: 16px;
       border-radius: 10px;
-      display: none;
       z-index: 15;
+      max-width: 280px;
     }
 
     @media (max-width: 768px) {
       #info-panel {
+        top: 10px;
+        right: 10px;
+        left: auto;
+        bottom: auto;
         width: 90%;
+      }
+    }
+
+    @media (min-width: 769px) {
+      #info-panel {
+        bottom: 20px;
+        left: 20px;
         top: auto;
-        bottom: 80px;
-        left: 50%;
-        transform: translateX(-50%);
+        right: auto;
       }
     }
 
@@ -75,7 +98,7 @@
 
   <div id="planet-buttons"></div>
 
-  <div id="info-panel">
+  <div id="info-panel" style="display: none;">
     <h2 id="planet-name" class="text-yellow-400 text-lg font-bold"></h2>
     <p id="planet-desc" class="text-sm text-gray-300 mt-2"></p>
   </div>
