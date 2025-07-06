@@ -2,6 +2,7 @@ const canvas = document.getElementById('canvas');
 const infoPanel = document.getElementById('info-panel');
 const nameEl = document.getElementById('planet-name');
 const descEl = document.getElementById('planet-desc');
+const buttons = document.getElementById('planet-buttons');
 const music = document.getElementById('bg-music');
 const toggleBtn = document.getElementById('music-toggle');
 const goToSelect = document.getElementById('planet-selector');
@@ -30,9 +31,12 @@ const loader = new THREE.TextureLoader();
 const planets = [];
 const orbitMeshes = [];
 const moonGroups = [];
-let showLunas = true;
-let selectedPlanet = null;
 
+let selectedPlanet = null;
+let showLunas = true;
+let showOrbits = true;
+
+// 🌍 Datos de planetas
 const planetsData = [
   { name: 'Mercurio', texture: 'textures/mercury.jpg', size: 0.3, distance: 3.5, orbitSpeed: 0.03, desc: 'Mercurio es el planeta más cercano al Sol y el más pequeño.' },
   { name: 'Venus', texture: 'textures/venus.jpg', size: 0.35, distance: 5, orbitSpeed: 0.015, desc: 'Venus tiene una atmósfera muy densa y caliente.' },
@@ -45,6 +49,7 @@ const planetsData = [
   { name: 'Plutón', texture: 'textures/pluto.jpg', size: 0.2, distance: 18.5, orbitSpeed: 0.001, desc: 'Plutón es un planeta enano con una órbita excéntrica.' }
 ];
 
+// 🌙 Lunas
 const moonsData = {
   'Tierra': [{ name: 'Luna', texture: 'textures/moons/luna.jpg', size: 0.1, distance: 0.6 }],
   'Marte': [
@@ -57,8 +62,8 @@ const moonsData = {
   'Neptuno': [{ name: 'Tritón', texture: 'textures/moons/triton.jpg', size: 0.08, distance: 0.9 }]
 };
 
-const totalToLoad = planetsData.length + 1 + Object.values(moonsData).flat().length;
 let loaded = 0;
+const totalToLoad = planetsData.length + 1 + Object.values(moonsData).flat().length + 1; // +1 fondo
 
 function checkLoaded() {
   loaded++;
@@ -67,98 +72,106 @@ function checkLoaded() {
   }
 }
 
-// 🌞 Sol
-loader.load(
-  'textures/sun.jpg',
-  texture => {
-    const sun = new THREE.Mesh(
-      new THREE.SphereGeometry(1.2, 32, 32),
-      new THREE.MeshBasicMaterial({ map: texture })
-    );
-    scene.add(sun);
-    checkLoaded();
-  },
-  undefined,
-  () => {
-    console.warn('No se cargó el Sol');
-    checkLoaded();
-  }
-);
-
-// 🌍 Planetas
-planetsData.forEach(data => {
-  loader.load(
-    data.texture,
-    texture => {
-      const orbitGroup = new THREE.Group();
-      scene.add(orbitGroup);
-
-      const geometry = new THREE.SphereGeometry(data.size, 32, 32);
-      const material = new THREE.MeshStandardMaterial({ map: texture });
-      const mesh = new THREE.Mesh(geometry, material);
-      mesh.userData = { ...data, angle: Math.random() * Math.PI * 2 };
-      orbitGroup.add(mesh);
-      planets.push({ mesh, data });
-
-      const orbit = new THREE.Mesh(
-        new THREE.RingGeometry(data.distance - 0.01, data.distance + 0.01, 64),
-        new THREE.MeshBasicMaterial({ color: 0x555555, side: THREE.DoubleSide })
-      );
-      orbit.rotation.x = Math.PI / 2;
-      orbitMeshes.push(orbit);
-      scene.add(orbit);
-
-      const moonGroup = new THREE.Group();
-      moonGroup.visible = showLunas;
-      moonGroups.push(moonGroup);
-      scene.add(moonGroup);
-
-      const planetMoons = moonsData[data.name] || [];
-      planetMoons.forEach((moon, index) => {
-        loader.load(
-          moon.texture,
-          moonTex => {
-            const moonMesh = new THREE.Mesh(
-              new THREE.SphereGeometry(moon.size, 16, 16),
-              new THREE.MeshStandardMaterial({ map: moonTex })
-            );
-            moonMesh.userData = {
-              angle: Math.random() * Math.PI * 2,
-              distance: moon.distance,
-              planetMesh: mesh,
-              speed: 0.05 + index * 0.01
-            };
-            moonGroup.add(moonMesh);
-            checkLoaded();
-          },
-          undefined,
-          () => {
-            console.warn(`No se cargó la luna: ${moon.texture}`);
-            checkLoaded();
-          }
-        );
-      });
-
-      const option = document.createElement('option');
-      option.value = data.name;
-      option.textContent = data.name;
-      goToSelect.appendChild(option);
-
-      checkLoaded();
-    },
-    undefined,
-    () => {
-      console.warn(`No se cargó el planeta: ${data.texture}`);
-      checkLoaded();
-    }
+// 🌌 Fondo estrellado
+loader.load('textures/stars/space.jpg', texture => {
+  const stars = new THREE.Mesh(
+    new THREE.SphereGeometry(100, 64, 64),
+    new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide })
   );
+  scene.add(stars);
+  checkLoaded();
+}, undefined, checkLoaded);
+
+// ☀️ Sol
+loader.load('textures/sun.jpg', texture => {
+  const sun = new THREE.Mesh(
+    new THREE.SphereGeometry(1.2, 32, 32),
+    new THREE.MeshBasicMaterial({ map: texture })
+  );
+  scene.add(sun);
+  checkLoaded();
+}, undefined, checkLoaded);
+
+// 🪐 Planetas y lunas
+planetsData.forEach(data => {
+  loader.load(data.texture, texture => {
+    const orbitGroup = new THREE.Group();
+    scene.add(orbitGroup);
+
+    const geometry = new THREE.SphereGeometry(data.size, 32, 32);
+    const material = new THREE.MeshStandardMaterial({ map: texture });
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.userData = { ...data, angle: Math.random() * Math.PI * 2 };
+    orbitGroup.add(mesh);
+
+    planets.push({ mesh, data });
+
+    // Órbitas
+    const orbit = new THREE.Mesh(
+      new THREE.RingGeometry(data.distance - 0.01, data.distance + 0.01, 64),
+      new THREE.MeshBasicMaterial({ color: 0x555555, side: THREE.DoubleSide })
+    );
+    orbit.rotation.x = Math.PI / 2;
+    orbit.visible = showOrbits;
+    orbitMeshes.push(orbit);
+    scene.add(orbit);
+
+    // 🌙 Lunas
+    const moonGroup = new THREE.Group();
+    moonGroup.visible = showLunas;
+    moonGroups.push(moonGroup);
+    scene.add(moonGroup);
+
+    const planetMoons = moonsData[data.name] || [];
+    planetMoons.forEach((moon, index) => {
+      loader.load(moon.texture, moonTex => {
+        const moonMesh = new THREE.Mesh(
+          new THREE.SphereGeometry(moon.size, 16, 16),
+          new THREE.MeshStandardMaterial({ map: moonTex })
+        );
+        moonMesh.userData = {
+          angle: Math.random() * Math.PI * 2,
+          distance: moon.distance,
+          planetMesh: mesh,
+          speed: 0.05 + index * 0.01
+        };
+        moonGroup.add(moonMesh);
+        checkLoaded();
+      }, undefined, checkLoaded);
+    });
+
+    // 🪐 Anillos de Saturno
+    if (data.name === 'Saturno') {
+      loader.load('textures/rings/saturn_ring.png', ringTex => {
+        const ring = new THREE.Mesh(
+          new THREE.RingGeometry(data.size + 0.1, data.size + 0.5, 64),
+          new THREE.MeshBasicMaterial({
+            map: ringTex,
+            side: THREE.DoubleSide,
+            transparent: true
+          })
+        );
+        ring.rotation.x = Math.PI / 2;
+        mesh.add(ring);
+        checkLoaded();
+      }, undefined, checkLoaded);
+    }
+
+    // Selector
+    const option = document.createElement('option');
+    option.value = data.name;
+    option.textContent = data.name;
+    goToSelect.appendChild(option);
+
+    checkLoaded();
+  }, undefined, checkLoaded);
 });
 
+// 📷 Cámara
 camera.position.set(0, 5, 20);
 controls.update();
 
-// UI
-let showOrbits = true;
+// 📦 UI
 toggleOrbits.onchange = () => {
   showOrbits = toggleOrbits.checked;
   orbitMeshes.forEach(o => o.visible = showOrbits);
@@ -180,7 +193,7 @@ goToSelect.onchange = () => {
   }
 };
 
-// Animación
+// 🚀 Animación
 function animate() {
   requestAnimationFrame(animate);
 
